@@ -5,6 +5,8 @@ import cats.implicits._
 import utils.FileUtils
 import scala.collection.mutable.PriorityQueue
 import scala.util.hashing.MurmurHash3.stringHash
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object Main extends IOApp {
 
@@ -35,27 +37,37 @@ object Main extends IOApp {
       .toMap
   }
 
-  private val hourRanges: Seq[String] =
+  private val hours: Seq[String] =
     (0 until 24)
       .map(_.toString.reverse.padTo(2, "0").reverse.mkString)
       .map(_ ++ "0000")
 
-  private val UrlBase = "https://dumps.wikimedia.org/other/pageviews/"
+  private val UrlBase = "https://dumps.wikimedia.org/other/pageviews"
 
-  private def getDayURLs(day: String): Seq[String] =
-    hourRanges.map(hour =>
-      UrlBase ++ "2020/2020-01/pageviews-" ++ day ++ "-" ++ hour ++ ".gz"
-    )
+  private val monthFormatter = DateTimeFormatter.ofPattern("MM")
+  private val dayFormatter = DateTimeFormatter.ofPattern("dd")
+
+  private def getDayURLs(date: LocalDate): Seq[String] = {
+    val year = date.getYear
+    val month = date.format(monthFormatter)
+    val day = date.format(dayFormatter)
+    hours.map(hour => s"$UrlBase/$year/$year-$month/pageviews-$year$month$day-$hour.gz")
+  }
+
+  private val getDate: String => LocalDate = LocalDate.parse
 
   def run(args: List[String]): IO[ExitCode] = {
-    List("20200101")
+    require(!args.isEmpty)
+    args
+      .map(getDate)
       .flatMap(getDayURLs)
       .map(url => {
         val filename = stringHash(url).toString ++ ".gz"
         (FileUtils.downloadFile(url, filename) *> FileUtils.openGZIPFile(filename))
           .map(iter => getNMost(iter.map(parseLine), 5))
       })
-      .parSequence
+      .toList
+      .sequence
       .map(_ foldMap identity)
       .map(count => {
         println(count)
