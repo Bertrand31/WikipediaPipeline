@@ -65,8 +65,7 @@ object Main extends IOApp {
 
   private val getDate: String => LocalDate = LocalDate.parse
 
-  def run(args: List[String]): IO[ExitCode] = {
-    require(!args.isEmpty)
+  def run(args: List[String]): IO[ExitCode] =
     args
       .map(getDate)
       .flatMap(getDayURLs)
@@ -77,13 +76,12 @@ object Main extends IOApp {
           .map(_ flatMap parseLine)
           .map(getNMost(5))
       })
-      .sequence
-      .map(_ foldMap identity)
-      .map(_ takeRight 5)
+      .parSequence
+      .map(_.reduce(_ |+| _))
+      .map(_.dequeueAll.takeRight(5))
       .map(count => {
         println(count)
         count
       })
       .as(ExitCode.Success)
-  }
 }
