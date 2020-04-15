@@ -4,7 +4,7 @@ import cats.effect._
 import cats.implicits._
 import utils.FileUtils
 import scala.collection.mutable.PriorityQueue
-import scala.collection.immutable.Queue
+import scala.util.hashing.MurmurHash3.stringHash
 
 object Main extends IOApp {
 
@@ -13,32 +13,53 @@ object Main extends IOApp {
     (domain + "|" + title, count.toInt)
   }
 
-  private def getNMost(iter: Iterator[(String, Int)], n: Int): Map[String, Int] = {
-    val initial = iter.take(n).toArray.sortBy(-_._2)
-    val heap = PriorityQueue.empty(Ordering[Int].reverse).addAll(initial.map(_._2))
-    val initialQueue = Queue().enqueueAll(initial.map(_._1))
-    val mostViewed = iter.foldLeft(initialQueue)((queue, line) => {
-      val (page, count) = line
-      if (count <= heap.head) queue
-      else {
-        heap.dequeue()
-        heap.enqueue(count)
-        queue
-          .dequeue
-          ._2
-          .enqueue(page)
-      }
-    })
-    (mostViewed zip heap).toMap
+  type Item = (String, Int)
+
+  object ItemOrdering extends Ordering[Item] {
+    def compare(a: Item, b: Item) = b._2 compare a._2
   }
 
+  private def getNMost(iter: Iterator[Item], n: Int): Map[String, Int] = {
+    val nFirst = iter.take(n)
+    val heap = PriorityQueue.empty(ItemOrdering).addAll(nFirst)
+    iter
+      .foldLeft(heap)((heap, line) => {
+        val (_, count) = line
+        if (count <= heap.head._2) heap
+        else {
+          heap.dequeue()
+          heap.enqueue(line)
+          heap
+        }
+      })
+      .toMap
+  }
+
+  private val hourRanges: Seq[String] =
+    (0 until 24)
+      .map(_.toString.reverse.padTo(2, "0").reverse.mkString)
+      .map(_ ++ "0000")
+
+  private val UrlBase = "https://dumps.wikimedia.org/other/pageviews/"
+
+  private def getDayURLs(day: String): Seq[String] =
+    hourRanges.map(hour =>
+      UrlBase ++ "2020/2020-01/pageviews-" ++ day ++ "-" ++ hour ++ ".gz"
+    )
+
   def run(args: List[String]): IO[ExitCode] = {
-    val ur = "https://dumps.wikimedia.org/other/pageviews/2020/2020-01/pageviews-20200101-000000.gz"
-    val filename = "test.txt.gz"
-    (FileUtils.downloadFile(ur, filename) *> FileUtils.openGZIPFile(filename))
-      .flatMap(iter => {
-        val mostViewed = getNMost(iter.map(parseLine), 5)
-        IO { println(mostViewed.toList) }
+    List("20200101")
+      .flatMap(getDayURLs)
+      .map(url => {
+        val filename = stringHash(url).toString ++ ".gz"
+        (FileUtils.downloadFile(url, filename) *> FileUtils.openGZIPFile(filename))
+          .map(iter => getNMost(iter.map(parseLine), 5))
+      })
+      .parSequence
+      .map(_ foldMap identity)
+      .map(count => {
+        println(count)
+        count
       })
       .as(ExitCode.Success)
   }
