@@ -1,5 +1,6 @@
 package airportmatching
 
+import cats.Monoid
 import cats.effect._
 import cats.implicits._
 import utils.FileUtils
@@ -10,18 +11,27 @@ import java.time.format.DateTimeFormatter
 
 object Main extends IOApp {
 
-  private def parseLine(line: String): (String, Int) = {
-    val Array(domain, title, count, _) = line.split(" ")
-    (domain + "|" + title, count.toInt)
-  }
-
   type Item = (String, Int)
 
   object ItemOrdering extends Ordering[Item] {
     def compare(a: Item, b: Item) = b._2 compare a._2
   }
 
-  private def getNMost(iter: Iterator[Item], n: Int): Map[String, Int] = {
+  implicit def itemQueueMonoid = new Monoid[PriorityQueue[Item]] {
+
+      override def empty: PriorityQueue[Item] = PriorityQueue.empty[Item](Ordering[Item])
+
+      override def combine(x: PriorityQueue[Item], y: PriorityQueue[Item]): PriorityQueue[Item] =
+        x ++ y
+  }
+
+  private def parseLine(line: String): Option[Item] =
+    line.split(" ") match {
+       case Array(domain, title, count, _) => Some((domain + " " + title, count.toInt))
+       case _                              => None
+    }
+
+  private def getNMost(n: Int)(iter: Iterator[Item]): PriorityQueue[Item] = {
     val nFirst = iter.take(n)
     val heap = PriorityQueue.empty(ItemOrdering).addAll(nFirst)
     iter
@@ -29,12 +39,11 @@ object Main extends IOApp {
         val (_, count) = line
         if (count <= heap.head._2) heap
         else {
-          heap.dequeue()
+          heap.dequeue
           heap.enqueue(line)
           heap
         }
       })
-      .toMap
   }
 
   private val hours: Seq[String] =
@@ -44,8 +53,8 @@ object Main extends IOApp {
 
   private val UrlBase = "https://dumps.wikimedia.org/other/pageviews"
 
-  private val monthFormatter = DateTimeFormatter.ofPattern("MM")
-  private val dayFormatter = DateTimeFormatter.ofPattern("dd")
+  private val monthFormatter = DateTimeFormatter ofPattern "MM"
+  private val dayFormatter = DateTimeFormatter ofPattern "dd"
 
   private def getDayURLs(date: LocalDate): Seq[String] = {
     val year = date.getYear
@@ -63,12 +72,14 @@ object Main extends IOApp {
       .flatMap(getDayURLs)
       .map(url => {
         val filename = stringHash(url).toString ++ ".gz"
-        (FileUtils.downloadFile(url, filename) *> FileUtils.openGZIPFile(filename))
-          .map(iter => getNMost(iter.map(parseLine), 5))
+        FileUtils.downloadIfNotExists(url, filename) *>
+        FileUtils.openGZIPFile(filename)
+          .map(_ flatMap parseLine)
+          .map(getNMost(5))
       })
-      .toList
       .sequence
       .map(_ foldMap identity)
+      .map(_ takeRight 5)
       .map(count => {
         println(count)
         count

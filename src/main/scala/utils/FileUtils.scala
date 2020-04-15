@@ -8,13 +8,21 @@ import java.io.File
 import scala.language.postfixOps
 import java.util.zip.GZIPInputStream
 import java.io.FileInputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 
 object FileUtils {
 
-  def downloadFile(url: String, filename: String): IO[Unit] =
+  private def checkIfExists(filename: String): IO[Boolean] =
     IO {
-      new URL(url) #> new File(filename) !! : Unit
+      Files.exists(Paths.get(filename))
     }
+
+  def downloadIfNotExists(url: String, filename: String): IO[Unit] =
+    checkIfExists(filename).flatMap(exists =>
+      if (exists) IO.pure(())
+      else IO { new URL(url) #> new File(filename) !! : Unit }
+    )
 
   def openGZIPFile(filename: String): IO[Iterator[String]] =
     IO {
