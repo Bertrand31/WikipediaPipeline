@@ -86,7 +86,7 @@ object Main extends IOApp {
       .parSequence
       .map(_.map(_.dequeueAll.toMap))
       .map(_ foldMap identity)
-      .map(_.to(ArraySeq).sortBy(- _._2).take(5))
+      .map(_.to(ArraySeq).sorted(ItemOrdering).take(5))
       .flatMap(printResults)
       .as(ExitCode.Success)
 }
