@@ -1,31 +1,12 @@
 package wikipipeline
 
-import scala.util.chaining.scalaUtilChainingOps
 import cats.effect._
 import cats.implicits._
-import scala.collection.mutable.PriorityQueue
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.collection.immutable.ArraySeq
 
 object Main extends IOApp {
-
-  private def getNMost(n: Int)(iter: Iterator[WikiStat]): Map[String, Int] = {
-    val baseHeap =
-      PriorityQueue
-        .empty(WikiStatOrdering)
-        .addAll(iter take n)
-    val results =
-      if (!iter.hasNext) baseHeap
-      else
-        iter.foldLeft(baseHeap)((heap, line) =>
-          if (line._2 <= heap.head._2)
-            heap
-          else
-            heap.tap(_.dequeue).tap(_.enqueue(line))
-        )
-    results.dequeueAll.toMap
-  }
 
   private val hours: List[String] =
     (0 until 24)
@@ -51,8 +32,7 @@ object Main extends IOApp {
       .map(LocalDate.parse)
       .map(day =>
         getDayURLs(day)
-          .map(HTTPSourceBridge.read)
-          .map(_.map(getNMost(5)))
+          .map(HTTPSourceBridge.getTopNForDay(5))
           .sequence
           .map(_ foldMap identity)
           .map(_.to(ArraySeq).sorted(WikiStatOrdering).take(5))

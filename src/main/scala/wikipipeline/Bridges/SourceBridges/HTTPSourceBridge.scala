@@ -18,9 +18,11 @@ object HTTPSourceBridge extends SourceBridge {
       .split("/")
       .last
 
-  def read(url: String): IO[Iterator[WikiStat]] = {
+  def getTopNForDay(n: Int)(url: String): IO[Map[String, Int]] = {
     val filename = makeCSVFilename(url)
     FileUtils.downloadIfNotExists(url, filename) *>
-    FileUtils.openGZIPFile(filename).map(parseWikiStats)
+    FileUtils.openGZIPFile(filename)
+      .map(parseWikiStats)
+      .map(WikiStatHandler.getNMost(n))
   }
 }
