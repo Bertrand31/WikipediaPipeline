@@ -6,16 +6,21 @@ import utils.FileUtils
 
 object HTTPSourceBridge extends SourceBridge {
 
-  private def parseLine(line: String): Option[WikiStat] =
-    line.split(" ") match {
-       case Array(domain, title, count, _) => Some((domain + " " + title, count.toInt))
-       case _                              => None
-    }
+  private val parseWikiStats: Iterator[String] => Iterator[WikiStat] =
+    _
+      .map(_ split " ")
+      .collect({
+        case Array(domain, title, count, _) => (domain ++ " " ++ title, count.toInt)
+      })
+
+  private val makeCSVFilename: String => String =
+    _
+      .split("/")
+      .last
 
   def read(url: String): IO[Iterator[WikiStat]] = {
-    val filename = url.split("/").last
+    val filename = makeCSVFilename(url)
     FileUtils.downloadIfNotExists(url, filename) *>
-    FileUtils.openGZIPFile(filename)
-      .map(_ flatMap parseLine)
+    FileUtils.openGZIPFile(filename).map(parseWikiStats)
   }
 }

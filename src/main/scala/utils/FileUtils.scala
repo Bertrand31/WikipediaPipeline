@@ -28,7 +28,6 @@ object FileUtils {
 
   def openGZIPFile(filename: String): IO[Iterator[String]] =
     IO {
-      println(filename)
       Source.fromInputStream(
         new GZIPInputStream(
           new FileInputStream(filename)
@@ -38,8 +37,8 @@ object FileUtils {
 
   def writeCSV(path: String, data: => IterableOnce[String]): IO[Unit] =
     IO {
-      Using.resource(new FileWriter(path))(writer =>
-        writer.write(data.iterator.mkString("\n") :+ '\n')
-      )
+      Using.resource(new FileWriter(path)) {
+        _.write(data.iterator.mkString("\n") :+ '\n')
+      }
     }
 }
