@@ -1,21 +1,10 @@
 package wikipipeline
 
-import cats.implicits._
 import cats.effect.IO
+import cats.implicits._
 import utils.FileUtils
 
 object FileDestinationBridge extends DestinationBridge {
-
-  private def ioPrint(str: String): IO[Unit] = IO { println(str) }
-
-  private def printResults(results: IndexedSeq[WikiStat]): IO[Unit] = {
-    val str =
-      results
-        .map({ case (page, count) => s"'$page' was seen $count times\n" })
-        .mkString
-    ioPrint(s"\n======= Top ${results.size} most seen pages =======\n") *>
-    ioPrint(str)
-  }
 
   private val CSVHead = "page;views"
 
@@ -26,5 +15,6 @@ object FileDestinationBridge extends DestinationBridge {
     FileUtils.writeCSV(date ++ ".csv", statsToCSVLines(results))
 
   def write(date: String)(results: IndexedSeq[WikiStat]): IO[Unit] =
-    printResults(results) *> writeCSVFile(results, date)
+    printResults(results) *>
+    writeCSVFile(results, date)
 }

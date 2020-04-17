@@ -31,6 +31,7 @@ object Main extends IOApp {
     args
       .map(LocalDate.parse)
       .map(day =>
+          // TODO: Avoid work if result file exists
         getDayURLs(day)
           .map(HTTPSourceBridge.getTopNForDay(5))
           .sequence
