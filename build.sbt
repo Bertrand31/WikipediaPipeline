@@ -12,6 +12,8 @@ libraryDependencies ++= Seq(
   // HTTP client
   "com.softwaremill.sttp.client" %% "core" % "2.0.7",
   "com.softwaremill.sttp.client" %% "async-http-client-backend-cats" % "2.0.7",
+  // Misc
+  "com.github.alexandrnikitin" %% "bloom-filter" % "latest.release",
 )
 
 scalacOptions ++= Seq(

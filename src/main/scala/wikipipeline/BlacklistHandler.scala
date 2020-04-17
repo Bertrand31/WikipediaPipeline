@@ -36,14 +36,14 @@ object BlacklistHandler {
       .unsafeRunSync
   }
 
-  private def askBloomFilter(item: String): Boolean =
-    bloomFilter.mightContain(item)
+  private val bloomFilterContains: String => Boolean =
+    bloomFilter.mightContain
 
-  private def askDisk(item: String): IO[Boolean] =
+  private def diskContains(item: String): IO[Boolean] =
     FileUtils.openFile(BlacklistPath)
       .map(_.exists(_ === item))
 
   def isBlacklisted(wikiStat: WikiStat): IO[Boolean] =
-    if (!askBloomFilter(wikiStat._1)) IO.pure(false)
-    else askDisk(wikiStat._1)
+    if (!bloomFilterContains(wikiStat._1)) IO.pure(false)
+    else diskContains(wikiStat._1)
 }
