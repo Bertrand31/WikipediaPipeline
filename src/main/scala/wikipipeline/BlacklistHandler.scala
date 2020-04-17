@@ -8,8 +8,6 @@ object BlacklistHandler {
 
   private val Blacklist =
     FileUtils.openFile(BlacklistPath)
-      .map(_.map(_ split " "))
-      .map(_.map(arr => arr(0) ++ " " ++ arr(1)))
       .map(_.toSet)
       .unsafeRunSync
 
