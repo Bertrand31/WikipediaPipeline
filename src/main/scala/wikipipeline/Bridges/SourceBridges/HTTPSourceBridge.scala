@@ -23,7 +23,7 @@ object HTTPSourceBridge extends SourceBridge {
     FileUtils.download(url, filename) *>
     FileUtils.openGZIPFile(filename)
       .map(parseWikiStats)
-      .map(WikiStatHandler.getNMost(n)) <*
+      .map(WikiStatHandler.getNMostWithout(n, BlacklistHandler.isBlacklisted)) <*
     FileUtils.deleteFile(filename)
   }
 }
