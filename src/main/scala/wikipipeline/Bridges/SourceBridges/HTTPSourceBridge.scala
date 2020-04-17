@@ -18,7 +18,6 @@ object HTTPSourceBridge extends SourceBridge {
       .split("/")
       .last
 
-    // Delete temp file after use
   def getTopNForDay(n: Int)(url: String): IO[Map[String, Int]] = {
     val filename = makeLocalPath(url)
     FileUtils.download(url, filename) *>

@@ -8,13 +8,20 @@ object FileDestinationBridge extends DestinationBridge {
 
   private val CSVHead = "page;views"
 
+  private val makeFilePath: String => String = _ ++ ".csv"
+
   private val statsToCSVLines: IndexedSeq[WikiStat] => IndexedSeq[String] =
     CSVHead +: _.map({ case (page, views) => s"$page;$views" })
 
-  private def writeCSVFile(results: IndexedSeq[WikiStat], date: String): IO[Unit] =
-    FileUtils.writeCSV(date ++ ".csv", statsToCSVLines(results))
+  private def writeCSVFile(filePath: String)(results: IndexedSeq[WikiStat]): IO[Unit] =
+    FileUtils.writeCSV(filePath, statsToCSVLines(results))
 
-  def write(date: String)(results: IndexedSeq[WikiStat]): IO[Unit] =
-    printResults(results) *>
-    writeCSVFile(results, date)
+  def write(date: String)(results: => IO[IndexedSeq[WikiStat]]): IO[Unit] = {
+    val filePath = makeFilePath(date)
+    FileUtils.checkIfExists(filePath) >>= {
+      case true => IO.pure(())
+      case _ =>
+        results >>= writeCSVFile(filePath)
+    }
+  }
 }
