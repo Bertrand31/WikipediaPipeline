@@ -27,7 +27,6 @@ object Main extends IOApp {
     hours.map(hour => s"$UrlBase/$year/$year-$month/pageviews-$year$month$day-$hour.gz")
   }
 
-  // TODO: check blacklist
   def run(args: List[String]): IO[ExitCode] =
     args
       .map(LocalDate.parse)
