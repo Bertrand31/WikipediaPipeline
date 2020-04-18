@@ -1,7 +1,6 @@
 package wikipipeline
 
 import scala.util.chaining.scalaUtilChainingOps
-import cats.effect.IO
 import cats.implicits._
 import bloomfilter.mutable.BloomFilter
 import utils.FileUtils
@@ -31,19 +30,16 @@ object BlacklistHandler {
   // 58000 is approximately the number of blacklisted pages we have at the moment.
   val bloomFilter = {
     val base = BloomFilter[String](58000, 0.01)
-    FileUtils.openFile(BlacklistPath)
-      .map(_.foldLeft(base)((bf, item) => bf.tap(_ add item)))
-      .unsafeRunSync
+    FileUtils.unsafeOpenFile(BlacklistPath)
+      .foldLeft(base)((bf, item) => bf.tap(_ add item))
   }
 
   private val bloomFilterContains: String => Boolean =
     bloomFilter.mightContain
 
-  private def diskContains(item: String): IO[Boolean] =
-    FileUtils.openFile(BlacklistPath)
-      .map(_.exists(_ === item))
+  private def diskContains(item: String): Boolean =
+    FileUtils.unsafeOpenFile(BlacklistPath).exists(_ === item)
 
-  def isBlacklisted(wikiStat: WikiStat): IO[Boolean] =
-    if (!bloomFilterContains(wikiStat._1)) IO.pure(false)
-    else diskContains(wikiStat._1)
+  def isBlacklisted(wikiStat: WikiStat): Boolean =
+    bloomFilterContains(wikiStat._1) && diskContains(wikiStat._1)
 }

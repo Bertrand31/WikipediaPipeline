@@ -3,6 +3,7 @@ package wikipipeline
 import cats.effect.IO
 import cats.implicits._
 import utils.FileUtils
+import utils.IteratorUtils.ImprovedIterator
 
 object HTTPSourceBridge extends SourceBridge {
 
@@ -23,7 +24,8 @@ object HTTPSourceBridge extends SourceBridge {
     FileUtils.download(url, filename) *>
     FileUtils.openGZIPFile(filename)
       .map(parseWikiStats)
-      .flatMap(WikiStatHandler.getNMostWithout(n, BlacklistHandler.isBlacklisted)) <*
+      .map(_.getNMostWithout(n, _._2, BlacklistHandler.isBlacklisted))
+      .map(_.toMap) <*
     FileUtils.deleteFile(filename)
   }
 }

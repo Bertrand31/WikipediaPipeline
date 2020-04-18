@@ -4,7 +4,7 @@ import cats.implicits._
 
 object StringUtils {
 
-  implicit class StringImprovements(val s: String) {
+  implicit class ImprovedString(val s: String) {
 
     def padLeft(minLength: Int, padWith: Char): String =
       if (s.length >= minLength) s

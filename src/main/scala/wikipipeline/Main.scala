@@ -1,11 +1,11 @@
 package wikipipeline
 
-import cats.effect._
+import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.collection.immutable.ArraySeq
-import utils.StringUtils._
+import utils.StringUtils.ImprovedString
 
 object Main extends IOApp {
 

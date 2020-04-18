@@ -27,16 +27,14 @@ object FileUtils {
       new URL(url) #> new File(filename) !! : Unit
     }
 
-  def openFile(path: String): IO[Iterator[String]] =
-    IO {
-      Source.fromFile(path).getLines
-    }
+  def unsafeOpenFile(path: String): Iterator[String] =
+    Source.fromFile(path).getLines
 
-  def openGZIPFile(filename: String): IO[Iterator[String]] =
+  def openGZIPFile(path: String): IO[Iterator[String]] =
     IO {
       Source.fromInputStream(
         new GZIPInputStream(
-          new FileInputStream(filename)
+          new FileInputStream(path)
         )
       ).getLines
     }
