@@ -28,7 +28,7 @@ import io.estatico.newtype.macros.newtype
   object WikiStat {
 
     def apply(domain: String, page: String, views: Int): WikiStat =
-      (domain, page, views).coerce
+      (domain, page, views).coerce[WikiStat]
 
     def unapply(stat: WikiStat): Option[(String, String, Int)] =
       Some(stat.v)

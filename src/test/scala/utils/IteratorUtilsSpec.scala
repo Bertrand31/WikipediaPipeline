@@ -18,7 +18,7 @@ class IteratorUtilsSpec extends AnyFlatSpec {
     assert(map == expectedMap)
   }
 
-  it should "return values in the same order if they're reversed" in {
+  it should "return values in the same order even if they're reversed" in {
 
     val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).reverse.iterator
 

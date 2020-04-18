@@ -17,22 +17,41 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
 ## Statement of purpose
 
 The goal is to build an application that will compute the top 25 pages on Wikipedia for each of the
-Wikipedia sub-domains.
+Wikipedia sub-domains, for the requested hour(s) of a day.
 
 ## TODO
 
-- test
+- integration, E2E testing
 
-- error handling
+- error handling: right now, a "happy path" is assumed in many places. In a real-life setting, we
+should be using error handling monads (like Try or Either) every time there's IO involved. And for
+easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
+[EitherT](https://typelevel.org/cats/datatypes/eithert.html) monads transformer.
+
+- logging should be added, for both successful tasks and failures.
 
 ## Miscellaneous
 
-You'll notice that I'm using the `scala-newtype` library to wrap some simple types. It provides an
+You'll notice that I'm using the `scala-newtype` library to wrap the WikiStat type. It provides an
 equivalent of Haskell's `newtype` in Scala. The idea of a `newtype` is to wrap a type into another,
 more specific type, so that we can enforce more type safety throughout the codebase. We could also
 achieve that using a regular case class, however a newtype incurs no runtime overhead at all,
 because it is removed altogether at compile time, and replaced by the underlying type: thus, we get
 the best of both worlds. Type safety at no runtime cost.
+
+## Running the app
+
+The app takes the day and hours arguments as command-line arguments.
+If it is not given any arguments, it will use the current date and hour as a default argument, and
+substract 24 hours to it.
+
+The format for the arguments is as following: `2019-03-12T12:00`.
+And one can provide as many as needed, separated by spaces.
+
+Without having to package the application, we can use SBT to run a sample use-case. For example:
+```
+sbt run 2019-03-12T12:00 2019-03-12T13:00
+```
 
 ## Packaging for production
 

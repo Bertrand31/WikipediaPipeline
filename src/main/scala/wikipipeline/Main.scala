@@ -8,7 +8,9 @@ import cats.implicits._
 object Main extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] =
-    NonEmptyList.fromList(args map LocalDateTime.parse)
+    args
+      .map(LocalDateTime.parse)
+      .toNel
       .getOrElse(NonEmptyList.of(LocalDateTime.now.minusDays(1)))
       .foldMap(IngestionHandler.ingestHourRange)
       .as(ExitCode.Success)

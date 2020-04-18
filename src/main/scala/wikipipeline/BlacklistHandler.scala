@@ -29,7 +29,7 @@ object BlacklistHandler {
   val bloomFilter = {
     val base = BloomFilter[String](58000, 0.01)
     FileUtils.unsafeOpenFile(AppConfig.blacklistPath)
-      .foldLeft(base)((bf, item) => bf.tap(_ add item))
+      .foldLeft(base)((bf, item) => bf.tap(_ add item)) // Assumes a "$domain $page" format
   }
 
   // This might yield false positives. Not false negatives.
