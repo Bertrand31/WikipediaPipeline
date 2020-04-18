@@ -32,13 +32,16 @@ object BlacklistHandler {
       .foldLeft(base)((bf, item) => bf.tap(_ add item))
   }
 
+  // This might yield false positives. Not false negatives.
   private val bloomFilterContains: String => Boolean =
     bloomFilter.mightContain
 
+  // This will give us a reliable result, but is very slow.
   private def diskContains(item: String): Boolean =
     FileUtils.unsafeOpenFile(AppConfig.blacklistPath)
       .exists(_ === item)
 
+  // First we try the bloom filter ; if there's a chance we got a false positive, we check the disk.
   def isBlacklisted(wikiStat: WikiStat): Boolean = {
     val row = wikiStat.domain ++ " " ++ wikiStat.page // This mimics the blacklist rows
     bloomFilterContains(row) && diskContains(row)
