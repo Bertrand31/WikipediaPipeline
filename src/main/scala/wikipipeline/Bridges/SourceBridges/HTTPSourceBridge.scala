@@ -15,9 +15,7 @@ object HTTPSourceBridge extends SourceBridge {
       })
 
   private val makeLocalPath: String => String =
-    _
-      .split("/")
-      .last
+    AppConfig.workingDirectory ++ _.split("/").last
 
   def getTopNForDay(n: Int)(url: String): IO[Seq[WikiStat]] = {
     val filename = makeLocalPath(url)
