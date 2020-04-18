@@ -36,7 +36,8 @@ object BlacklistHandler {
     bloomFilter.mightContain
 
   private def diskContains(item: String): Boolean =
-    FileUtils.unsafeOpenFile(AppConfig.blacklistPath).exists(_ === item)
+    FileUtils.unsafeOpenFile(AppConfig.blacklistPath)
+      .exists(_ === item)
 
   def isBlacklisted(wikiStat: WikiStat): Boolean =
     bloomFilterContains(wikiStat._1) && diskContains(wikiStat._1)
