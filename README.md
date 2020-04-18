@@ -1,3 +1,5 @@
+# Wikipedia pageview data pipeline
+
 ```
 Wikip  iaWi  pedia ikiped  Wikipe   Wik pediaW kipediaWik  ediaWikiped   ikipedi     pediaW       aWi
 ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWiki   iaWiki      ikipe
@@ -12,16 +14,25 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
       Wi   ed      pediaWikipedi WikipediaWikipediaWi      aWikipediaWi ipediaWik    iaWikipediaWi   ediaWi
 ```
 
-# Wikipedia Page Views Pipeline
-
 ## Statement of purpose
 
+The goal is to build an application that will compute the top 25 pages on Wikipedia for each of the
+Wikipedia sub-domains.
 
-
-## TODO
+## TODO
 
 - test
+
 - error handling
+
+## Miscellaneous
+
+You'll notice that I'm using the `scala-newtype` library to wrap some simple types. It provides an
+equivalent of Haskell's `newtype` in Scala. The idea of a `newtype` is to wrap a type into another,
+more specific type, so that we can enforce more type safety throughout the codebase. We could also
+achieve that using a regular case class, however a newtype incurs no runtime overhead at all,
+because it is removed altogether at compile time, and replaced by the underlying type: thus, we get
+the best of both worlds. Type safety at no runtime cost.
 
 ## Packaging for production
 
