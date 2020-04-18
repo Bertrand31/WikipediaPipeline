@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.sttp.client" %% "core" % "2.0.7",
   "com.softwaremill.sttp.client" %% "async-http-client-backend-cats" % "2.0.7",
   // Misc
+  "com.github.pureconfig" %% "pureconfig" % "0.12.3",
   "com.github.alexandrnikitin" %% "bloom-filter" % "latest.release",
 )
 
