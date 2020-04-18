@@ -30,6 +30,18 @@ class IteratorUtilsSpec extends AnyFlatSpec {
     assert(map == expectedMap)
   }
 
+  it should "return values in the reverse order if given a reverse Ordering implicit" in {
+
+    val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).iterator
+
+    val map = data.getNMostByWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)(Ordering[Int].reverse)
+    val expectedMap = Map(
+      (false -> ArraySeq(1, 5, 7)),
+      (true -> ArraySeq(4, 8, 10)),
+    )
+    assert(map == expectedMap)
+  }
+
   it should "get the first 2 values by order, grouped by length, minus blacklisted values" in {
 
     val blacklist = Set("shit", "poop")
