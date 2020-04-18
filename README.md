@@ -23,12 +23,20 @@ Wikipedia sub-domains, for the requested hour(s) of a day.
 
 - integration, E2E testing
 
+- streaming of the input data: right now, the data dump from wikipedia is being download to the
+disk, processed, then deleted. Ideally, we'd somehow stream, uncompress and process it directly
+in one go.
+
 - error handling: right now, a "happy path" is assumed in many places. In a real-life setting, we
 should be using error handling monads (like Try or Either) every time there's IO involved. And for
 easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
 [EitherT](https://typelevel.org/cats/datatypes/eithert.html) monads transformer.
 
 - logging should be added, for both successful tasks and failures.
+
+- parallelism: even though I've encountered HTTP 503 errors when trying to make multiple queries
+to wikimedia at the same time, the task at hand is inherently parallelisable. In the future, it is
+definitely something that should be looked into.
 
 ## Miscellaneous
 
