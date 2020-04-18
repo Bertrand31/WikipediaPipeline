@@ -6,6 +6,7 @@ import utils.FileUtils
 import utils.IteratorUtils.ImprovedIterator
 import wikipipeline.{AppConfig, BlacklistHandler, WikiStat}
 import wikipipeline.WikiStatOrdering
+import BlacklistHandler.isBlacklisted
 
 object HTTPSourceBridge extends SourceBridge {
 
@@ -19,12 +20,12 @@ object HTTPSourceBridge extends SourceBridge {
   private val makeLocalPath: String => String =
     AppConfig.workingDirectory ++ _.split("/").last
 
-  def getTopNForFile(n: Int)(url: String): IO[Seq[WikiStat]] = {
+  def getTopNForFile(n: Int)(url: String): IO[Map[String, Seq[WikiStat]]] = {
     val filename = makeLocalPath(url)
     FileUtils.download(url, filename) *>
     FileUtils.openGZIPFile(filename)
       .map(parseWikiStats)
-      .map(_.getNMostWithout(n, _.views, BlacklistHandler.isBlacklisted)(WikiStatOrdering)) <*
+      .map(_.getNMostByWithout(n, _.domain, isBlacklisted)(WikiStatOrdering)) <*
     FileUtils.deleteFile(filename)
   }
 }

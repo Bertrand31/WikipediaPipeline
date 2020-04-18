@@ -5,5 +5,5 @@ import wikipipeline.WikiStat
 
 trait DestinationBridge {
 
-  def write(date: String)(results: => IO[Seq[WikiStat]]): IO[Unit]
+  def write(dayId: String)(results: => IO[Map[String, Seq[WikiStat]]]): IO[Unit]
 }

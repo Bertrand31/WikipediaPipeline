@@ -1,0 +1,46 @@
+import org.scalatest.flatspec.AnyFlatSpec
+import utils.IteratorUtils._
+import scala.collection.immutable.ArraySeq
+
+class IteratorUtilsSpec extends AnyFlatSpec {
+
+  behavior of "the getNMostByWithout iterator method"
+
+  it should "get the first 3 values, grouped by whether they are even, minus the multiples of 3" in {
+
+    val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).iterator
+
+    val map = data.getNMostByWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)
+    val expectedMap = Map(
+      (false -> ArraySeq(7, 5, 1)),
+      (true -> ArraySeq(8, 4, 2)),
+    )
+    assert(map == expectedMap)
+  }
+
+  it should "return values in the same order if they're reversed" in {
+
+    val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).reverse.iterator
+
+    val map = data.getNMostByWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)
+    val expectedMap = Map(
+      (false -> ArraySeq(7, 5, 1)),
+      (true -> ArraySeq(8, 4, 2)),
+    )
+    assert(map == expectedMap)
+  }
+
+  it should "get the first 2 values by order, grouped by length, minus blacklisted values" in {
+
+    val blacklist = Set("shit", "poop")
+
+    val data = Seq("foo", "bar", "baz", "shit", "test", "poop").iterator
+
+    val map = data.getNMostByWithout(2, _.size, blacklist.contains)
+    val expectedMap = Map(
+      (3 -> ArraySeq("baz", "bar")),
+      (4 -> ArraySeq("test")),
+    )
+    assert(map == expectedMap)
+  }
+}

@@ -29,10 +29,11 @@ object IngestionHandler {
   def ingestHourRange(time: LocalDateTime): IO[Unit] =
     FileDestinationBridge.write(dateFormatter.format(time)) {
       HTTPSourceBridge.getTopNForFile(AppConfig.topNumber)(getDateURL(time))
-        .map(
-          _
-            .sorted(WikiStatOrdering)
-            .take(AppConfig.topNumber)
-        )
+        // .map(
+          // _
+            // .view
+            // .mapValues(_.sorted(WikiStatOrdering))
+            // .toMap
+        // )
     }
 }

@@ -5,5 +5,5 @@ import wikipipeline.WikiStat
 
 trait SourceBridge {
 
-  def getTopNForFile(n: Int)(url: String): IO[Seq[WikiStat]]
+  def getTopNForFile(n: Int)(url: String): IO[Map[String, Seq[WikiStat]]]
 }
