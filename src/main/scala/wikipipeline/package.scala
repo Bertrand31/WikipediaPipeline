@@ -1,12 +1,11 @@
 import scala.language.implicitConversions
 import io.estatico.newtype.ops.toCoercibleIdOps
+import io.estatico.newtype.macros.newtype
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 import wikipipeline.types.Config
 
 package object wikipipeline {
-
-import io.estatico.newtype.macros.newtype
 
   // Load the app configuration file, cast it into a Config type.
   // If that fails, initialize a Config object with default values.
