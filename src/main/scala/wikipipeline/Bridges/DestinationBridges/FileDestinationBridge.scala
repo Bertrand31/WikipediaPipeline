@@ -1,8 +1,9 @@
-package wikipipeline
+package wikipipeline.bridges
 
 import cats.effect.IO
 import cats.implicits._
 import utils.FileUtils
+import wikipipeline.{AppConfig, WikiStat}
 
 object FileDestinationBridge extends DestinationBridge {
 

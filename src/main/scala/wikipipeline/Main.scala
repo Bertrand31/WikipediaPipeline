@@ -7,7 +7,6 @@ object Main extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] =
     args
-      .map(IngestionHandler.ingestDay)
-      .parSequence
+      .foldMap(IngestionHandler.ingestDay)
       .as(ExitCode.Success)
 }

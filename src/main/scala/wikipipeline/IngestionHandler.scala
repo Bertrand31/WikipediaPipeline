@@ -6,6 +6,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.collection.immutable.ArraySeq
 import utils.StringUtils.ImprovedString
+import bridges.{FileDestinationBridge, HTTPSourceBridge}
 
 object IngestionHandler {
 

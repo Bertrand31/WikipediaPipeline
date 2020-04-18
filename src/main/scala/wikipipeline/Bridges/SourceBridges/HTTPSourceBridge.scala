@@ -1,9 +1,10 @@
-package wikipipeline
+package wikipipeline.bridges
 
 import cats.effect.IO
 import cats.implicits._
 import utils.FileUtils
 import utils.IteratorUtils.ImprovedIterator
+import wikipipeline.{AppConfig, BlacklistHandler, WikiStat}
 
 object HTTPSourceBridge extends SourceBridge {
 
