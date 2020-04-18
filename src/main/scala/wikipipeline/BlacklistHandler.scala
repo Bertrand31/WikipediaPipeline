@@ -39,6 +39,8 @@ object BlacklistHandler {
     FileUtils.unsafeOpenFile(AppConfig.blacklistPath)
       .exists(_ === item)
 
-  def isBlacklisted(wikiStat: WikiStat): Boolean =
-    bloomFilterContains(wikiStat._1) && diskContains(wikiStat._1)
+  def isBlacklisted(wikiStat: WikiStat): Boolean = {
+    val row = wikiStat.domain ++ " " ++ wikiStat.page // This mimics the blacklist rows
+    bloomFilterContains(row) && diskContains(row)
+  }
 }

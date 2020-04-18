@@ -1,8 +1,12 @@
+import scala.language.implicitConversions
+import io.estatico.newtype.ops.toCoercibleIdOps
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 import wikipipeline.types.Config
 
 package object wikipipeline {
+
+import io.estatico.newtype.macros.newtype
 
   // Load the app configuration file, cast it into a Config type.
   // If that fails, initialize a Config object with default values.
@@ -12,10 +16,24 @@ package object wikipipeline {
       .load[Config]
       .getOrElse(Config())
 
-  type WikiStat = (String, Int)
+  @newtype case class WikiStat(v: (String, String, Int)) {
+
+    def domain: String = v._1
+    def page: String = v._2
+    def views: Int = v._3
+  }
+
+  object WikiStat {
+
+    def apply(domain: String, page: String, views: Int): WikiStat =
+      (domain, page, views).coerce
+
+    def unapply(stat: WikiStat): Option[(String, String, Int)] =
+      Some(stat.v)
+  }
 
   object WikiStatOrdering extends Ordering[WikiStat] {
 
-    def compare(a: WikiStat, b: WikiStat) = b._2 compare a._2
+    def compare(a: WikiStat, b: WikiStat) = b.views compare a.views
   }
 }

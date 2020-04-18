@@ -3,7 +3,6 @@ package wikipipeline
 import cats.effect.IO
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import scala.collection.immutable.ArraySeq
 import bridges.{FileDestinationBridge, HTTPSourceBridge}
 
 object IngestionHandler {
@@ -32,7 +31,6 @@ object IngestionHandler {
       HTTPSourceBridge.getTopNForFile(AppConfig.topNumber)(getDateURL(time))
         .map(
           _
-            .to(ArraySeq)
             .sorted(WikiStatOrdering)
             .take(AppConfig.topNumber)
         )

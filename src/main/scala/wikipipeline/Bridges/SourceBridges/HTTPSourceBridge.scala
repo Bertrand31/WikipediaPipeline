@@ -5,6 +5,7 @@ import cats.implicits._
 import utils.FileUtils
 import utils.IteratorUtils.ImprovedIterator
 import wikipipeline.{AppConfig, BlacklistHandler, WikiStat}
+import wikipipeline.WikiStatOrdering
 
 object HTTPSourceBridge extends SourceBridge {
 
@@ -12,7 +13,7 @@ object HTTPSourceBridge extends SourceBridge {
     _
       .map(_ split " ")
       .collect({
-        case Array(domain, title, count, _) => (domain ++ " " ++ title, count.toInt)
+        case Array(domain, title, count, _) => WikiStat(domain, title, count.toInt)
       })
 
   private val makeLocalPath: String => String =
@@ -23,7 +24,7 @@ object HTTPSourceBridge extends SourceBridge {
     FileUtils.download(url, filename) *>
     FileUtils.openGZIPFile(filename)
       .map(parseWikiStats)
-      .map(_.getNMostWithout(n, _._2, BlacklistHandler.isBlacklisted)) <*
+      .map(_.getNMostWithout(n, _.views, BlacklistHandler.isBlacklisted)(WikiStatOrdering)) <*
     FileUtils.deleteFile(filename)
   }
 }
