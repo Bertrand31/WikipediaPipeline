@@ -19,13 +19,12 @@ object HTTPSourceBridge extends SourceBridge {
       .split("/")
       .last
 
-  def getTopNForDay(n: Int)(url: String): IO[Map[String, Int]] = {
+  def getTopNForDay(n: Int)(url: String): IO[Seq[WikiStat]] = {
     val filename = makeLocalPath(url)
     FileUtils.download(url, filename) *>
     FileUtils.openGZIPFile(filename)
       .map(parseWikiStats)
-      .map(_.getNMostWithout(n, _._2, BlacklistHandler.isBlacklisted))
-      .map(_.toMap) <*
+      .map(_.getNMostWithout(n, _._2, BlacklistHandler.isBlacklisted)) <*
     FileUtils.deleteFile(filename)
   }
 }

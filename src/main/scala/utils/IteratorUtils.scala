@@ -17,7 +17,7 @@ object IteratorUtils {
         if (!iter.hasNext) baseHeap
         else
           iter.foldLeft(baseHeap)((heap, line) => {
-            // We only check the blacklist if we're about to queue an item: it saves us many lookups
+            // We only use the predicate if we're about to queue an item
             if (getValue(line) <= getValue(heap.head) || isRejected(line)) heap
             else
               heap.tap(_.dequeue).tap(_.enqueue(line))

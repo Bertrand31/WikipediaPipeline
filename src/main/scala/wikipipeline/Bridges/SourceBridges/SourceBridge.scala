@@ -4,5 +4,5 @@ import cats.effect.IO
 
 trait SourceBridge {
 
-  def getTopNForDay(n: Int)(day: String): IO[Map[String, Int]]
+  def getTopNForDay(n: Int)(day: String): IO[Seq[WikiStat]]
 }

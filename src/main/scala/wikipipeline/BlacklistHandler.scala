@@ -25,12 +25,10 @@ import utils.FileUtils
   */
 object BlacklistHandler {
 
-  private val BlacklistPath = "src/main/resources/data/blacklist_domains_and_pages"
-
   // 58000 is approximately the number of blacklisted pages we have at the moment.
   val bloomFilter = {
     val base = BloomFilter[String](58000, 0.01)
-    FileUtils.unsafeOpenFile(BlacklistPath)
+    FileUtils.unsafeOpenFile(AppConfig.blacklistPath)
       .foldLeft(base)((bf, item) => bf.tap(_ add item))
   }
 
@@ -38,7 +36,7 @@ object BlacklistHandler {
     bloomFilter.mightContain
 
   private def diskContains(item: String): Boolean =
-    FileUtils.unsafeOpenFile(BlacklistPath).exists(_ === item)
+    FileUtils.unsafeOpenFile(AppConfig.blacklistPath).exists(_ === item)
 
   def isBlacklisted(wikiStat: WikiStat): Boolean =
     bloomFilterContains(wikiStat._1) && diskContains(wikiStat._1)
