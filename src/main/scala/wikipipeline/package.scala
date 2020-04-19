@@ -35,6 +35,7 @@ package object wikipipeline {
 
   object WikiStatOrdering extends Ordering[WikiStat] {
 
-    def compare(a: WikiStat, b: WikiStat): Int = b.views compare a.views
+    def compare(a: WikiStat, b: WikiStat): Int =
+      b.views compare a.views
   }
 }

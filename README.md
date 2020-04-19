@@ -18,8 +18,8 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
 
 - [Statement of purpose](#statement-of-purpose)
 - [Technical solutions](#technical-solutions)
-- [Future developments](#future-developments)
 - [Miscellaneous](#miscellaneous)
+- [Future developments](#future-developments)
 - [Running the service](#running-the-service)
 - [Packaging for production](#packaging-for-production)
 
@@ -41,6 +41,15 @@ explained in great lengths [along the code itself](./src/main/scala/wikipipeline
 
 Lastly, I chose to use Cats extensively in order to write code as functional, safe and declarative
 as possible.
+
+## Miscellaneous
+
+You'll notice that I'm using the `scala-newtype` library to wrap the WikiStat type. It provides an
+equivalent of Haskell's `newtype` in Scala. The idea of a `newtype` is to wrap a type into another,
+more specific type, so that we can enforce more type safety throughout the codebase. We could also
+achieve that using a regular case class, however a newtype incurs no runtime overhead at all,
+because it is removed altogether at compile time, and replaced by the underlying type: thus, we get
+the best of both worlds. Type safety at no runtime cost.
 
 ## Future developments
 
@@ -64,15 +73,6 @@ be added, for both successful tasks and failures.
 to wikimedia at the same time, the task at hand is inherently parallelisable. In the future, it is
 definitely something that should be looked into. We could even envision mutliple machines working
 in parallel, each processing multiple "hour chunks" and writing them to a single HDFS cluster.
-
-## Miscellaneous
-
-You'll notice that I'm using the `scala-newtype` library to wrap the WikiStat type. It provides an
-equivalent of Haskell's `newtype` in Scala. The idea of a `newtype` is to wrap a type into another,
-more specific type, so that we can enforce more type safety throughout the codebase. We could also
-achieve that using a regular case class, however a newtype incurs no runtime overhead at all,
-because it is removed altogether at compile time, and replaced by the underlying type: thus, we get
-the best of both worlds. Type safety at no runtime cost.
 
 ## Running the service
 

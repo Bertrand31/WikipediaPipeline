@@ -17,6 +17,7 @@ object Main extends IOApp {
     args
       .map(LocalDateTime.parse)
       .toNel
+      // It an empty list was provided, we use the current time minus 24 hours
       .getOrElse(NonEmptyList.of(LocalDateTime.now.minusDays(1)))
       .foldMap(ingestionHandler.ingestHourRange)
       .as(ExitCode.Success)
