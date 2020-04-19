@@ -51,25 +51,29 @@ achieve that using a regular case class, however a newtype incurs no runtime ove
 because it is removed altogether at compile time, and replaced by the underlying type: thus, we get
 the best of both worlds. Type safety at no runtime cost.
 
+Also, the service reads environment variables from [application.conf](./src/main/resources/application.conf)
+using [PureConfig](https://github.com/pureconfig/pureconfig). However, if no env file is present, it
+[provides](./src/main/scala/wikipipeline/package.scala#L16) [default values](./src/main/scala/wikipipeline/Types/Config.scala).
+
 ## Future developments
 
-- testing: at the moment, only unit tests have been written. Before going to production, we'd have
+- *testing*: at the moment, only unit tests have been written. Before going to production, we'd have
 to spend time writing integration and E2E testing, to also test the "impure" aspects of this
 serivce.
 
-- streaming of the input data: right now, the data dump from wikipedia is being download to the
+- *streaming of the input data*: right now, the data dump from wikipedia is being download to the
 disk, processed, then deleted. Ideally, we'd somehow stream, uncompress and process it directly
 in one go.
 
-- error handling: right now, a "happy path" is assumed in many places. In a real-life setting, we
+- *error handling*: right now, a "happy path" is assumed in many places. In a real-life setting, we
 should be using error handling monads (like Try or Either) every time there's I/O involved. And for
 easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
-[EitherT](https://typelevel.org/cats/datatypes/eithert.html) monads transformer.
+[EitherT](https://typelevel.org/cats/datatypes/eithert.html) monad transformer.
 
-- logging: right now, this service is mute. Before deploying it to production, proper logging should
+- *logging*: right now, this service is mute. Before deploying it to production, proper logging should
 be added, for both successful tasks and failures.
 
-- parallelism: even though I've encountered HTTP 503 errors when trying to make multiple queries
+- *parallelism*: even though I've encountered HTTP 503 errors when trying to make multiple queries
 to wikimedia at the same time, the task at hand is inherently parallelisable. In the future, it is
 definitely something that should be looked into. We could even envision mutliple machines working
 in parallel, each processing multiple "hour chunks" and writing them to a single HDFS cluster.
@@ -85,7 +89,7 @@ And one can provide as many as needed, separated by spaces.
 
 Without having to package the application, we can use SBT to run a sample use-case. For example:
 ```
-sbt run 2019-03-12T12:00 2019-03-12T13:00
+sbt:WikipediaPageviewPipeline> run 2019-03-12T12:00 2019-03-12T13:00
 ```
 
 ## Packaging for production
@@ -103,4 +107,8 @@ This zip can now be shipped on the server. Once it is unzipped, this service can
 inside the resulting folder with:
 ```
 ./bin/wikipediapageviewpipeline
+```
+Or, with arguments:
+```
+./bin/wikipediapageviewpipeline 2019-03-12T12:00 2019-03-12T13:00
 ```
