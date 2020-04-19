@@ -57,23 +57,28 @@ using [PureConfig](https://github.com/pureconfig/pureconfig). However, if no env
 
 ## Future developments
 
-- *testing*: at the moment, only unit tests have been written. Before going to production, we'd have
-to spend time writing integration and E2E testing, to also test the "impure" aspects of this
+- **scheduling**: if we were to use this service to automatically fetch and process the new data
+as soon as it comes live, we'd have two ways of achieving it. Either this service would run 24/7
+and use some sort of internal scheduling to wake up every hour, or it could be used as a glorified
+script run every hour by a CRON task.
+
+- **testing**: at the moment, only unit tests have been written. Before going to production, we'd
+have to spend time writing integration and E2E testing, to also test the "impure" aspects of this
 serivce.
 
-- *streaming of the input data*: right now, the data dump from wikipedia is being download to the
-disk, processed, then deleted. Ideally, we'd somehow stream, uncompress and process it directly
+- **streaming of the input data**: right now, the data dump from wikipedia is being downloaded to
+the disk, processed, then deleted. Ideally, we'd somehow stream, uncompress and process it directly
 in one go.
 
-- *error handling*: right now, a "happy path" is assumed in many places. In a real-life setting, we
-should be using error handling monads (like Try or Either) every time there's I/O involved. And for
-easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
+- **error handling**: right now, a "happy path" is assumed in many places. In a real-life setting,
+we should be using error handling monads (like Try or Either) every time there's I/O involved. And
+for easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
 [EitherT](https://typelevel.org/cats/datatypes/eithert.html) monad transformer.
 
-- *logging*: right now, this service is mute. Before deploying it to production, proper logging
+- **logging**: right now, this service is mute. Before deploying it to production, proper logging
 should be added, for both successful tasks and failures.
 
-- *parallelism*: even though I've encountered HTTP 503 errors when trying to make multiple queries
+- **parallelism**: even though I've encountered HTTP 503 errors when trying to make multiple queries
 to wikimedia at the same time, the task at hand is inherently parallelisable. In the future, it is
 definitely something that should be looked into. We could even envision mutliple machines working
 in parallel, each processing multiple "hour chunks" and writing them to a single HDFS cluster.
