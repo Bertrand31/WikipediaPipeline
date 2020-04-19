@@ -14,12 +14,26 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
       Wi   ed      pediaWikipedi WikipediaWikipediaWi      aWikipediaWi ipediaWik    iaWikipediaWi   ediaWi
 ```
 
+## Table of contents
+
+- [Statement of purpose](#statement-of-purpose)
+- [Technical solution](#technical solution)
+- [Future developments](#future-developments)
+- [Miscellaneous](#miscellaneous)
+- [Running the service](#running-the-service)
+- [Packaging for production](#packaging-for-production)
+
 ## Statement of purpose
 
 The goal is to build an application that will compute the top 25 pages on Wikipedia for each of the
 Wikipedia sub-domains, for the requested hour(s) of a day.
 
-## TODO
+## Technical solution
+
+TODO: write about downloading & deleting file, writing CSVs to disk, bloom filter for blacklist,
+use of cats and IO monad
+
+## Future developments
 
 - testing: at the moment, only unit tests have been written. Before going to production, we'd have
 to spend time writing integration and E2E testing, to also test the "impure" aspects of this
@@ -34,11 +48,13 @@ should be using error handling monads (like Try or Either) every time there's I/
 easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
 [EitherT](https://typelevel.org/cats/datatypes/eithert.html) monads transformer.
 
-- logging: right now, this service is mute. Before deploying it to production, proper logging shouldbe added, for both successful tasks and failures.
+- logging: right now, this service is mute. Before deploying it to production, proper logging should
+be added, for both successful tasks and failures.
 
 - parallelism: even though I've encountered HTTP 503 errors when trying to make multiple queries
 to wikimedia at the same time, the task at hand is inherently parallelisable. In the future, it is
-definitely something that should be looked into.
+definitely something that should be looked into. We could even envision mutliple machines working
+in parallel, each processing multiple "hour chunks" and writing them to a single HDFS cluster.
 
 ## Miscellaneous
 
@@ -49,9 +65,9 @@ achieve that using a regular case class, however a newtype incurs no runtime ove
 because it is removed altogether at compile time, and replaced by the underlying type: thus, we get
 the best of both worlds. Type safety at no runtime cost.
 
-## Running the app
+## Running the service
 
-The app takes the day and hours arguments as command-line arguments.
+The service takes the day and hours arguments as command-line arguments.
 If it is not given any arguments, it will use the current date and hour as a default argument, and
 substract 24 hours to it.
 
