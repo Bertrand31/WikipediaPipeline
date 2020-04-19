@@ -26,8 +26,10 @@ import utils.FileUtils
 object BlacklistHandler {
 
   // 58000 is approximately the number of blacklisted pages we have at the moment.
+  private val ExpectedBlacklistLength = 58000
+
   val bloomFilter = {
-    val base = BloomFilter[String](58000, 0.01)
+    val base = BloomFilter[String](ExpectedBlacklistLength, 0.01)
     FileUtils.unsafeOpenFile(AppConfig.blacklistPath)
       .foldLeft(base)((bf, item) => bf.tap(_ add item)) // Assumes a "$domain $page" format
   }

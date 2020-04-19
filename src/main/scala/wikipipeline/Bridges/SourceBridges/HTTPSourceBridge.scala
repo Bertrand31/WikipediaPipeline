@@ -9,7 +9,7 @@ import utils.IteratorUtils.ImprovedIterator
 import wikipipeline.{AppConfig, BlacklistHandler, WikiStat, WikiStatOrdering}
 import BlacklistHandler.isBlacklisted
 
-object HTTPSourceBridge extends SourceBridge {
+class HTTPSourceBridge extends SourceBridge {
 
   // While this looks like an environment variable, it's actually not one: it is unlikely to change
   // and if it did, then the rest of the logic in this file would most likely also have to change.
@@ -21,7 +21,7 @@ object HTTPSourceBridge extends SourceBridge {
   private val monthFormatter = DateTimeFormatter ofPattern "MM"
   private val dayFormatter =   DateTimeFormatter ofPattern "dd"
 
-  private def getChunkURL(date: LocalDateTime): String = {
+  protected def getChunkURL(date: LocalDateTime): String = {
     val year = date.getYear
     val month = date.format(monthFormatter)
     val day = date.format(dayFormatter)
@@ -29,14 +29,14 @@ object HTTPSourceBridge extends SourceBridge {
     s"$UrlBase/$year/$year-$month/pageviews-$year$month$day-${hour}0000.gz"
   }
 
-  private val parseWikiStats: Iterator[String] => Iterator[WikiStat] =
+  protected val parseWikiStats: Iterator[String] => Iterator[WikiStat] =
     _
       .map(_ split " ")
       .collect({
         case Array(domain, title, count, _) => WikiStat(domain, title, count.toInt)
       })
 
-  private val makeLocalPath: String => String =
+  protected val makeLocalPath: String => String =
     AppConfig.workingDirectory ++ _.split("/").last
 
   def getTopNForFile(n: Int)(time: LocalDateTime): IO[Map[String, Seq[WikiStat]]] = {
