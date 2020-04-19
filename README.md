@@ -17,7 +17,7 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
 ## Table of contents
 
 - [Statement of purpose](#statement-of-purpose)
-- [Technical solutions](#technical solutions)
+- [Technical solutions](#technical-solutions)
 - [Future developments](#future-developments)
 - [Miscellaneous](#miscellaneous)
 - [Running the service](#running-the-service)
@@ -39,8 +39,8 @@ directory are [configurable through environment variables](./src/main/scala/wiki
 For the blacklist, I've decided to use a Bloom Filter. The reason why and the alternatives are
 explained in great lengths [along the code itself](./src/main/scala/wikipipeline/BlacklistHandler.scala#L8).
 
-Lastly, I chose to use Cats extensively in order to write code as functional, safe and
-declarative as possible.
+Lastly, I chose to use Cats extensively in order to write code as functional, safe and declarative
+as possible.
 
 ## Future developments
 
