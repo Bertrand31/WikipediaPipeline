@@ -15,21 +15,23 @@ object IteratorUtils {
       */
     def getNMostByWithout[T](n: Int, groupBy: A => T, isRejected: A => Boolean)
                             (implicit ord: Ordering[A]): Map[T, Seq[A]] =
-        iter.foldLeft(Map[T, PriorityQueue[A]]())((map, item) => {
-          val key = groupBy(item)
-          val pQueue = map.getOrElse(key, PriorityQueue.empty(ord))
-          if (pQueue.size >= n && ord.gt(item, pQueue.head)) map
-          else if (isRejected(item)) map // We only use the predicate if we're about to queue an item
-          else {
-            val base =
-              if (pQueue.size < n) pQueue
-              else pQueue.tap(_.dequeue)
-            map.updated(key, base.tap(_.enqueue(item)))
-          }
-        })
-          .view
-          .mapValues(_.dequeueAll)
-          .toMap
+      iter.foldLeft(Map[T, PriorityQueue[A]]())((map, item) => {
+        val key = groupBy(item)
+        val pQueue = map.getOrElse(key, PriorityQueue.empty(ord))
+        // If we have the required amount of elements in this queue, and this particular element
+        // has lower priority than the queue item with the lowest priority, we don't queue it.
+        if (pQueue.size >= n && ord.gt(item, pQueue.head)) map
+        else if (isRejected(item)) map // We only use the predicate if we're about to queue an item
+        else {
+          val base =
+            if (pQueue.size < n) pQueue
+            else pQueue.tap(_.dequeue)
+          map.updated(key, base.tap(_.enqueue(item)))
+        }
+      })
+        .view
+        .mapValues(_.dequeueAll)
+        .toMap
   }
 
 }

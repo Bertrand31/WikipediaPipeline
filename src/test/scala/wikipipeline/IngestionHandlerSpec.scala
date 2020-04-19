@@ -30,6 +30,6 @@ class IngestionHandlerSpec extends AnyFlatSpec {
     }
 
     val ingestionHandler = new IngestionHandler(FakeSourceBridge, FakeDestinationBridge)
-    ingestionHandler.ingestHourRange(LocalDateTime.parse("2019-01-01T10:30"))
+    ingestionHandler.ingestHour(LocalDateTime.parse("2019-01-01T10:30"))
   }
 }
