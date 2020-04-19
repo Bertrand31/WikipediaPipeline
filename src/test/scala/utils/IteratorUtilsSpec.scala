@@ -1,6 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import utils.IteratorUtils._
 import scala.collection.immutable.ArraySeq
+import utils.IteratorUtils._
 
 class IteratorUtilsSpec extends AnyFlatSpec {
 

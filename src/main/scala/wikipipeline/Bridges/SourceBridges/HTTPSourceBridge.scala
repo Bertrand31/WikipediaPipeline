@@ -33,6 +33,7 @@ class HTTPSourceBridge extends SourceBridge {
     _
       .map(_ split " ")
       .collect({
+        // It can happen that some rows are missing essential columns. They are discarded here.
         case Array(domain, title, count, _) => WikiStat(domain, title, count.toInt)
       })
 

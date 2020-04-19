@@ -1,6 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import utils.DateUtils
 import java.time.LocalDateTime
+import utils.DateUtils
 
 class DateUtilsSpec extends AnyFlatSpec {
 
