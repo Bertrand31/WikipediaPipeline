@@ -17,7 +17,7 @@ class HTTPSourceBridge extends SourceBridge {
   // to that URL structure we depend on.
   private val UrlBase = "https://dumps.wikimedia.org/other/pageviews"
 
-  private val hourFormatter =  DateTimeFormatter ofPattern "hh"
+  private val hourFormatter =  DateTimeFormatter ofPattern "HH"
   private val monthFormatter = DateTimeFormatter ofPattern "MM"
   private val dayFormatter =   DateTimeFormatter ofPattern "dd"
 
