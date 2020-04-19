@@ -44,10 +44,10 @@ object FileUtils {
     * a configurable size from it, and writing them as we go, in such a way that we never hold more
     * than one chunk in memory.
     */
-  def writeCSVProgressively(path: String, seq: => Iterator[_], chunkSize: Int = 10000): IO[Unit] =
+  def writeCSVProgressively(path: String, iter: => Iterator[_], chunkSize: Int = 5000): IO[Unit] =
     IO {
       Using.resource(new FileWriter(path))(writer =>
-        seq
+        iter
           .sliding(chunkSize, chunkSize)
           .foreach((writer.write(_: String)) compose (_.mkString("\n") :+ '\n'))
       )

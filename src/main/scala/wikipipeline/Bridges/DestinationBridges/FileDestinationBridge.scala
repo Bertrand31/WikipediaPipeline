@@ -25,6 +25,9 @@ class FileDestinationBridge extends DestinationBridge {
       statsToCSVLines(results),
     )
 
+  /** Here, `results` contains all the computations necessary to get and process the data.
+    * However, it is passed as a lazy argument and ends up being evaluated only if needed.
+    */
   def write(dayId: String)(results: => IO[Map[String, Seq[WikiStat]]]): IO[Unit] = {
     val filePath = makeFilePath(dayId)
     FileUtils.checkIfExists(filePath) >>= {
