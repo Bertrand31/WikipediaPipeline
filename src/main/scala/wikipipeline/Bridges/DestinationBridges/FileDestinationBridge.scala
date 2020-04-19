@@ -13,9 +13,8 @@ class FileDestinationBridge extends DestinationBridge {
   protected val statsToCSVLines: Map[String, Seq[WikiStat]] => Iterator[String] =
     CSVHead +: _
                 .values
-                .flatMap {
-                  _ map { case WikiStat(domain, page, views) => s"$domain;$page;$views" }
-                }
+                .flatten
+                .map({ case WikiStat(domain, page, views) => s"$domain;$page;$views" })
                 .iterator
 
   protected val makeFilePath: String => String = AppConfig.destinationPath ++ _ ++ ".csv"
