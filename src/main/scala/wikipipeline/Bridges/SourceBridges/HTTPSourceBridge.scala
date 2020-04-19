@@ -45,7 +45,7 @@ class HTTPSourceBridge extends SourceBridge {
     FileUtils.download(url, filename) *>
     FileUtils.openGZIPFile(filename)
       .map(parseWikiStats)
-      .map(_.getNMostByWithout(n, _.domain, isBlacklisted)(WikiStatOrdering)) <*
+      .map(_.groupNMostWithout(n, _.domain, isBlacklisted)(WikiStatOrdering)) <*
     FileUtils.deleteFile(filename)
   }
 }

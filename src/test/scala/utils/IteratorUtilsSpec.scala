@@ -20,7 +20,7 @@ class IteratorUtilsSpec extends AnyFlatSpec {
 
     val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).iterator
 
-    val map = data.getNMostByWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)
+    val map = data.groupNMostWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)
     val expectedMap = Map(
       (false -> ArraySeq(7, 5, 1)),
       (true -> ArraySeq(8, 4, 2)),
@@ -32,7 +32,7 @@ class IteratorUtilsSpec extends AnyFlatSpec {
 
     val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).reverse.iterator
 
-    val map = data.getNMostByWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)
+    val map = data.groupNMostWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)
     val expectedMap = Map(
       (false -> ArraySeq(7, 5, 1)),
       (true -> ArraySeq(8, 4, 2)),
@@ -44,7 +44,7 @@ class IteratorUtilsSpec extends AnyFlatSpec {
 
     val data = Seq(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).iterator
 
-    val map = data.getNMostByWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)(Ordering[Int].reverse)
+    val map = data.groupNMostWithout(3, nb => nb % 2 == 0, nb => nb % 3 == 0)(Ordering[Int].reverse)
     val expectedMap = Map(
       (false -> ArraySeq(1, 5, 7)),
       (true -> ArraySeq(4, 8, 10)),
@@ -58,7 +58,7 @@ class IteratorUtilsSpec extends AnyFlatSpec {
 
     val data = Seq("foo", "bar", "baz", "shit", "test", "poop").iterator
 
-    val map = data.getNMostByWithout(2, _.size, blacklist.contains)
+    val map = data.groupNMostWithout(2, _.size, blacklist.contains)
     val expectedMap = Map(
       (3 -> ArraySeq("baz", "bar")),
       (4 -> ArraySeq("test")),
