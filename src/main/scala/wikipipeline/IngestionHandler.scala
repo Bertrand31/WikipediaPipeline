@@ -31,8 +31,8 @@ class IngestionHandler(sourceBridge: SourceBridge, destinationBridge: Destinatio
       }
     }
       .getOrElse {
-          val now = LocalDateTime.now
-          getHoursBetween(now.minusDays(1), now)
+        val now = LocalDateTime.now
+        getHoursBetween(now.minusDays(1), now)
       }
       .foldMap(ingestHour)
 }

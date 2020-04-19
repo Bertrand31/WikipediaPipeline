@@ -17,13 +17,11 @@ class FileDestinationBridge extends DestinationBridge {
                 .map({ case WikiStat(domain, page, views) => s"$domain;$page;$views" })
                 .iterator
 
-  protected val makeFilePath: String => String = AppConfig.destinationPath ++ _ ++ ".csv"
+  protected val makeFilePath: String => String =
+    AppConfig.destinationPath ++ _ ++ ".csv"
 
-  private def writeCSVFile(filePath: String)(results: Map[String, Seq[WikiStat]]): IO[Unit] =
-    FileUtils.writeCSVProgressively(
-      filePath,
-      statsToCSVLines(results),
-    )
+  private def writeCSVFile(filePath: String): Map[String, Seq[WikiStat]] => IO[Unit] =
+    statsToCSVLines >>> (FileUtils.writeCSVProgressively(filePath, _))
 
   /** Here, `results` contains all the computations necessary to get and process the data.
     * However, it is passed as a lazy argument and ends up being evaluated only if needed.

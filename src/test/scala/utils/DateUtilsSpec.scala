@@ -23,4 +23,20 @@ class DateUtilsSpec extends AnyFlatSpec {
     val output = DateUtils.getHoursBetween(start, end)
     assert(output === expectedOutput)
   }
+
+  it should "be inclusive of the last date if it falls exactly one the last hour" in {
+
+    val start = LocalDateTime.parse("2018-01-01T23:34")
+    val end = LocalDateTime.parse("2018-01-02T02:34")
+
+    val expectedOutput = List(
+      "2018-01-01T23:34",
+      "2018-01-02T00:34",
+      "2018-01-02T01:34",
+      "2018-01-02T02:34",
+    ).map(LocalDateTime.parse)
+
+    val output = DateUtils.getHoursBetween(start, end)
+    assert(output === expectedOutput)
+  }
 }
