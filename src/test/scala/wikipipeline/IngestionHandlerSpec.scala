@@ -11,7 +11,8 @@ class IngestionHandlerSpec extends AnyFlatSpec {
   it should "call the source bridge with the date, and the destination bridge with an ID string" in {
 
     val fakeData = Map[String, Seq[WikiStat]](
-      ("fr" -> Seq(WikiStat("fr", "Main_Page", 900)))
+      ("fr" -> Seq(WikiStat("fr", "Main_Page", 900))),
+      ("sg" -> Seq(WikiStat("sg", "Main_Page", 100))),
     )
 
     object FakeSourceBridge extends SourceBridge {
