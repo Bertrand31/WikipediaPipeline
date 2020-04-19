@@ -17,7 +17,7 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
 ## Table of contents
 
 - [Statement of purpose](#statement-of-purpose)
-- [Technical solution](#technical solution)
+- [Technical solutions](#technical solutions)
 - [Future developments](#future-developments)
 - [Miscellaneous](#miscellaneous)
 - [Running the service](#running-the-service)
@@ -28,10 +28,19 @@ ipedi  ikip  iaWik pediaW  ipedi    ipe iaWiki  diaWikiped aWikipediaWi  pediaWi
 The goal is to build an application that will compute the top 25 pages on Wikipedia for each of the
 Wikipedia sub-domains, for the requested hour(s) of a day.
 
-## Technical solution
+## Technical solutions
 
-TODO: write about downloading & deleting file, writing CSVs to disk, bloom filter for blacklist,
-use of cats and IO monad
+For our sample use-case, we're downloading the hourly data over HTTP, in the shape of GZipped CSV
+files, writing them in a temporary work location, and then deleting them after consumption.
+
+We're writing the output data to a CSV file. Both the temporary work directory and the output
+directory are [configurable through environment variables](./src/main/scala/wikipipeline/Types/Config.scala).
+
+For the blacklist, I've decided to use a Bloom Filter. The reason why and the alternatives are
+explained in great lengths [along the code itself](./src/main/scala/wikipipeline/BlacklistHandler.scala#L8).
+
+Lastly, I chose to use Cats extensively in order to write code as functional, safe and
+declarative as possible.
 
 ## Future developments
 
