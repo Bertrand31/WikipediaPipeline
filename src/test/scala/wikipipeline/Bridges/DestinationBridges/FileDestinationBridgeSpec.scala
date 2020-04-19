@@ -26,6 +26,6 @@ class FileDestinationBridgeSpec extends AnyFlatSpec {
       "sg;Kopi_Peng;100",
       "sg;Bak Kut Teh;300",
     )
-    assert(output === expectedOutput)
+    assert(output.toList === expectedOutput)
   }
 }

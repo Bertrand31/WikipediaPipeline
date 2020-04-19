@@ -7,12 +7,14 @@ object IteratorUtils {
 
   implicit class ImprovedIterator[A](val iter: Iterator[A]) {
 
+    def `+:`: A => Iterator[A] = Iterator(_) ++ iter
+
     /** While this method is very specific to our business logic needs, it still is generic enough
       * that it can be made a method of Iterator. After all, we're not building a public library but
       * instead, a service performing a very specific task.
       */
     def getNMostByWithout[T](n: Int, groupBy: A => T, isRejected: A => Boolean)
-                         (implicit ord: Ordering[A]): Map[T, Seq[A]] =
+                            (implicit ord: Ordering[A]): Map[T, Seq[A]] =
         iter.foldLeft(Map[T, PriorityQueue[A]]())((map, item) => {
           val key = groupBy(item)
           val pQueue = map.getOrElse(key, PriorityQueue.empty(ord))

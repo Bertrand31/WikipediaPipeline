@@ -70,8 +70,8 @@ should be using error handling monads (like Try or Either) every time there's I/
 easier handling, we'd by using a [TryT](https://github.com/Bertrand31/TryT-monad-transformer) or
 [EitherT](https://typelevel.org/cats/datatypes/eithert.html) monad transformer.
 
-- *logging*: right now, this service is mute. Before deploying it to production, proper logging should
-be added, for both successful tasks and failures.
+- *logging*: right now, this service is mute. Before deploying it to production, proper logging
+should be added, for both successful tasks and failures.
 
 - *parallelism*: even though I've encountered HTTP 503 errors when trying to make multiple queries
 to wikimedia at the same time, the task at hand is inherently parallelisable. In the future, it is

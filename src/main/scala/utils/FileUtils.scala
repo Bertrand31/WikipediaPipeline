@@ -27,8 +27,8 @@ object FileUtils {
       new URL(url) #> new File(filename) !! : Unit
     }
 
-  def unsafeOpenFile(path: String): Iterator[String] =
-    Source.fromFile(path).getLines
+  val unsafeOpenFile: String => Iterator[String] =
+    Source.fromFile(_).getLines
 
   def openGZIPFile(path: String): IO[Iterator[String]] =
     IO {
@@ -39,10 +39,17 @@ object FileUtils {
       ).getLines
     }
 
-  def writeCSV(path: String, data: => IterableOnce[String]): IO[Unit] =
+  /** We're given a lazy iterator: we might as well leverage its laziness and avoid pulling it all
+    * into memory before committing it to the disk. Instead, we're progressively pulling chunks of
+    * a configurable size from it, and writing them as we go, in such a way that we never hold more
+    * than one chunk in memory.
+    */
+  def writeCSVProgressively(path: String, seq: => Iterator[_], chunkSize: Int = 10000): IO[Unit] =
     IO {
-      Using.resource(new FileWriter(path)) {
-        _.write(data.iterator.mkString("\n") :+ '\n')
-      }
+      Using.resource(new FileWriter(path))(writer =>
+        seq
+          .sliding(chunkSize, chunkSize)
+          .foreach((writer.write(_: String)) compose (_.mkString("\n") :+ '\n'))
+      )
     }
 }

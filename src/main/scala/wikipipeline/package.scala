@@ -17,8 +17,8 @@ package object wikipipeline {
 
   @newtype case class WikiStat(v: (String, String, Int)) {
 
-    // Since during runtime WikiStat is no more than a truple, we need to define getters
-    // manually t make it as convenient as a normal case class.
+    // Since during runtime WikiStat is no more than a truple, we need to define
+    // getters manually to make it as convenient as a normal case class.
     def domain: String = v._1
     def page: String   = v._2
     def views: Int     = v._3
