@@ -4,6 +4,16 @@ import scala.collection.immutable.ArraySeq
 
 class IteratorUtilsSpec extends AnyFlatSpec {
 
+  behavior of "the +: method on iterators"
+
+  it should "prepend a value to an iterator" in {
+
+    val iter = Iterator(1, 2, 3)
+    val iterWith0 = 0 +: iter
+    val expectedOutput = Iterator(0, 1, 2, 3)
+    assert(iterWith0.toList === expectedOutput.toList)
+  }
+
   behavior of "the getNMostByWithout iterator method"
 
   it should "get the first 3 values, grouped by whether they are even, minus the multiples of 3" in {
