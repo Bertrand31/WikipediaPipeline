@@ -5,16 +5,19 @@ version := "0.1"
 scalaVersion := "2.13.1"
 
 libraryDependencies ++= Seq(
-  "io.estatico" %% "newtype" % "0.4.3",
+  // Data structures
+  "com.github.alexandrnikitin" %% "bloom-filter" % "0.12.0",
+  // Cats
   "org.typelevel" %% "cats-core" % "2.1.1",
   "org.typelevel" %% "cats-effect" % "2.1.2",
+  // Tests
   "org.scalatest" %% "scalatest" % "3.1.0",
   // HTTP client
   "com.softwaremill.sttp.client" %% "core" % "2.0.7",
   "com.softwaremill.sttp.client" %% "async-http-client-backend-cats" % "2.0.7",
   // Misc
+  "io.estatico"           %% "newtype" % "0.4.3",
   "com.github.pureconfig" %% "pureconfig" % "0.12.3",
-  "com.github.alexandrnikitin" %% "bloom-filter" % "latest.release",
 )
 
 scalacOptions ++= Seq(
@@ -38,8 +41,6 @@ scalacOptions in Test --= Seq(
 
 javaOptions ++= Seq(
   "-XX:+CMSClassUnloadingEnabled", // Enable class unloading under the CMS GC
-  "-Xms2g",
-  "-Xmx12g",
 )
 
 enablePlugins(JavaServerAppPackaging)
