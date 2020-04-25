@@ -1,10 +1,12 @@
 package utils
 
+import scala.annotation.tailrec
 import scala.util.Try
 import java.time.LocalDateTime
 
 object DateUtils {
 
+  @tailrec
   def getHoursBetween(
     start: LocalDateTime, end: LocalDateTime, soFar: List[LocalDateTime] = List.empty,
   ): List[LocalDateTime] =
